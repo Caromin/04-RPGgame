@@ -9,8 +9,8 @@
 }
 
 body {
-	background: #ffffff url("../../assets/images/ep_naturalblack.png") repeat top left;
-	color: #ffffff;
+	background: #ffffff url("../../assets/images/battlfield.png") repeat top left;
+	color: #000;
 }
 
 .jumbotron {
@@ -28,3 +28,9 @@ body {
     width: 100%;
     position: fixed;
 }
+
+
+.img-responsive {
+	width: 20%;
+}
+
