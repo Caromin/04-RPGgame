@@ -2,8 +2,10 @@
 var x = 0;
 var pokemonHP;
 var pokemonAttack;
-var enemyHP;
-var enemyAttack;
+var currentEnemyHP;
+var currentEnemyAttack;
+var picked = "";
+var photo = "";
 
 // names and picture urls for all the pokemon
 var pokemon = [{picture: "assets/images/001Bulbasaur.png", name: "Bulbasaur"},
@@ -19,9 +21,10 @@ $(window).on("load", function() {
 		$('#choosePokemon').hide();
 		$('#battleField').show()
 // checking the id on the image that i clicked		
-		console.log(this.id);
+		picked = this.id;
+		photo = this.src; 
 // passing the id and src parameters to the myPokemon div		
-		myPokemon(this.id, this.src);
+		myPokemon(picked, photo);
 // now removing the choosen pokemon from the array to generate the enemy pokemon		
 		pokemon.splice(this.id, 1);
 // consolelogging the array again to check if it worked as expected		
@@ -30,8 +33,15 @@ $(window).on("load", function() {
 		displayPokemon();
 //why does this onclick only work when it is inside this, but not ouside by itself?		
 		$(".confirm").on("click", function() {
-			console.log(this.id);
+			var getValueButton = this
+  				if (currentEnemyHP >= 0 ){
+  				  				$('.confirm').not(getValueButton).prop('disabled', true);
+  				  			} else { 
+  				  				$(this).removeClass("confirm");		
+								$(this).prop('disabled', true);
+								$('.confirm').prop('disabled', false);	}
 			attack(this.id);
+
 		});
 	});
 });
@@ -57,8 +67,8 @@ function displayPokemon() {
 				.css({"width": "20%", "clear": "both"})
 				$("#enemies").append(button);
 				$("#enemies").append(img) ;
-				enemyHP = img.attr('data-hp');
-				enemyAttack = img.attr('data-attack');
+				currentEnemyHP = img.attr('data-hp');
+				currentEnemyAttack = img.attr('data-attack');
 
 			}
 		};
@@ -67,12 +77,12 @@ function displayPokemon() {
 }
 
 // similar to displayPokemon() but for myPokemon and floated to the left
-function myPokemon(id, src) {
+function myPokemon(pick, photo) {
 	var mine = $('<img>')
-		.attr('src', src)
+		.attr('src', photo)
 		.attr("class", "img-responsive float-left" )
 		.attr("id", "mine")
-		.attr("data-hp", Math.floor(Math.random() * 30) + 10)
+		.attr("data-hp", Math.floor(Math.random() * 30) + 15)
 		.attr("data-attack", Math.floor(Math.random() * 10) + 5);
 		$("#myPokemon").append(mine);
 		pokemonHP = mine.attr('data-hp');
@@ -81,13 +91,24 @@ function myPokemon(id, src) {
 }
 
 function attack(id) {
-		if (enemyHP !== 0  && pokemonHP > 0) {
-			enemyHP = enemyHP - pokemonAttack 
+// checks to see if any pokemon is below or equal to 0hp		
+		if (currentEnemyHP !== 0  && pokemonHP >= 0) {
+			currentEnemyHP = currentEnemyHP - pokemonAttack;
+			pokemonHP = pokemonHP - currentEnemyAttack;
+			console.log("enemyhp: " + currentEnemyHP);
+			console.log("myhp: " + pokemonHP);
+				if (currentEnemyHP <= 0 && pokemonHP > 0) {
+					pokemonHP += 20;
+					console.log("currenthp " + pokemonHP);
+					console.log("you won!");
+					$('#' + id + '').prop('disabled', true);		
+				}
 		}
-			else if (enemyHP <= 0 && pokemonHP > 0) {
-				console.log("you won!");
-				
-			}
+// if both hp are below 0hp then game over and disables attacks				
+		if (currentEnemyHP > 0 && pokemonHP <= 0 || currentEnemyHP <= 0 && pokemonHP <= 0) {
+			alert("sorry you lost!");
+			$('.confirm').prop('disabled', true);	
+		}	
 }
 
 function endScreen() {
