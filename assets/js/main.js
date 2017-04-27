@@ -1,9 +1,31 @@
+// the two major problems left when i stopped working on it:
+// the timing from when i remove the choosen pokemon and post the enemy ones created a duplicate
+// if i someone other than Bulbasaur.
+
+// the other problem was resetting the current enemy hp and attack for the next pokemon
+// easier if only two but as it is set up now it is not able to scale properly for unlimited battles
+
+
+
+
+
+
+
+
+
 // counter for displayingPokemon() after your pokemon is picked
 var x = 0;
+
+// pushed my pokemon stats here
 var pokemonHP;
 var pokemonAttack;
+
+// pushed enemy pokemon stats here PROBLEM, see above notes
 var currentEnemyHP;
 var currentEnemyAttack;
+
+// used to link name and image to my pokemon function
+// MAYBE WHERE THE PROBLEM HAPPENED ABOVE
 var picked = "";
 var photo = "";
 
@@ -34,28 +56,34 @@ $(window).on("load", function() {
 //why does this onclick only work when it is inside this, but not ouside by itself?		
 		$(".confirm").on("click", function() {
 			var getValueButton = this
+// if statement to block all other buttons not pressed to help control options			
   				if (currentEnemyHP >= 0 ){
   				  				$('.confirm').not(getValueButton).prop('disabled', true);
-  				  			} else { 
+  				  			} else {
+// this section is not properly vetted, on how well it works  				  			 
   				  				$(this).removeClass("confirm");		
 								$(this).prop('disabled', true);
 								$('.confirm').prop('disabled', false);	}
+// pushes this parameter to the attack function so i know who i am battling
 			attack(this.id);
 
 		});
 	});
 });
 
-
+// inital pick screen
 function displayPokemon() {
 		for (i = 0; i < pokemon.length; i++) {
 			var img = $('<img>')
 				.attr('src', pokemon[i].picture)	
 				.attr("class", "img-responsive" )
 				.attr("id", 'pokemon[' + i + ']')
+// for the first pass			
 			if (x === 0) {		
 				$("#choosePokemon").append(img);
-			} else {
+			} 
+// for the second pass, after pokemon is picked
+			else {
 				img.attr("class", "float-right");
 				img.css("width", "20%")
 				.attr("data-hp", Math.floor(Math.random() * 30) + 10)
@@ -90,6 +118,7 @@ function myPokemon(pick, photo) {
 
 }
 
+//this is the function where the battle interactions happen
 function attack(id) {
 // checks to see if any pokemon is below or equal to 0hp		
 		if (currentEnemyHP !== 0  && pokemonHP >= 0) {
@@ -97,6 +126,8 @@ function attack(id) {
 			pokemonHP = pokemonHP - currentEnemyAttack;
 			console.log("enemyhp: " + currentEnemyHP);
 			console.log("myhp: " + pokemonHP);
+// if enemy is defeated, hp goes up, BUT around this function
+// is where one of the problems is			
 				if (currentEnemyHP <= 0 && pokemonHP > 0) {
 					pokemonHP += 20;
 					console.log("currenthp " + pokemonHP);
@@ -104,13 +135,15 @@ function attack(id) {
 					$('#' + id + '').prop('disabled', true);		
 				}
 		}
-// if both hp are below 0hp then game over and disables attacks				
+// if both hp are below 0hp then game over and disables attacks		
+// works fine does the job				
 		if (currentEnemyHP > 0 && pokemonHP <= 0 || currentEnemyHP <= 0 && pokemonHP <= 0) {
 			alert("sorry you lost!");
 			$('.confirm').prop('disabled', true);	
 		}	
 }
 
-function endScreen() {
+// did not waste time implimenting it
+// function endScreen() {
 
-}
+// }
